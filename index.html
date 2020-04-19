@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>LD46: TheGlowingBook</title>
+    </head>
+    <body>
+        <pre id='pre'>
+            Type anything to start the game.
+        </pre>
+        <form action='' id='myform'>
+            <input type='text' id='input' />
+            <button type='button' id='send' onclick="sendform()">Send</button>
+        </form>
+         <div id="end"></div>
+        <script>
+            function updatepre() {
+                var t = localStorage['logs'];
+                t = t.replace(new RegExp('BLUE', 'g'), '<span style="color:blue">');
+                t = t.replace(new RegExp('GREEN', 'g'), '<span style="color:green">');
+                t = t.replace(new RegExp('GREY', 'g'), '<span style="color:gray">');
+                t = t.replace(new RegExp('CLEAR', 'g'), '</span>');
+                document.getElementById("pre").innerHTML = t;
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+            var pre = document.getElementById("pre");
+            if (localStorage['logs']) {
+                pre.innerHTML = localStorage['logs'];
+                updatepre();
+            } else {
+                localStorage['logs'] = '';
+            }
+            document.getElementById("input").focus();
+            function sendform() {
+                var text = document.getElementById("input");
+                var value = input.value.trim();
+                if (value) {
+                    console.dir('send ' + value);
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            input.value = '';
+                            var rep = JSON.parse(this.response);
+                            localStorage['logs'] += '> ' + value + '\n';
+                            localStorage['logs'] += rep.reply;
+                            updatepre();
+                        }
+                    };
+                    xhttp.open("POST", '/pubmsg');
+                    xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                    xhttp.send(JSON.stringify({"what": value}));
+                }
+            }
+            var form = document.getElementById("myform");
+            function handleForm(event) {
+                event.preventDefault();
+                sendform();
+            }
+            form.addEventListener('submit', handleForm);
+        </script>
+    </body>
+</html>
+
