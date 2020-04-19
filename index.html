@@ -4,9 +4,7 @@
         <title>LD46: TheGlowingBook</title>
     </head>
     <body>
-        <pre id='pre'>
-            Type anything to start the game.
-        </pre>
+        <pre id='pre'>Enter your nickname below.</pre>
         <form action='' id='myform'>
             <input type='text' id='input' />
             <button type='button' id='send' onclick="sendform()">Send</button>
@@ -21,6 +19,10 @@
                 t = t.replace(new RegExp('CLEAR', 'g'), '</span>');
                 document.getElementById("pre").innerHTML = t;
                 window.scrollTo(0, document.body.scrollHeight);
+                if (t.includes('Thank you for playing')) {
+                    document.getElementById("input").style.display = 'none';
+                    document.getElementById("send").style.display = 'none';
+                }
             }
             var pre = document.getElementById("pre");
             if (localStorage['logs']) {

@@ -308,7 +308,7 @@ You notice that some pages are annotated, probably by previous explorers.
 CLEAR
 {ambiant_sound()}
 CLEAR
-Your goal is to continue the annotation the pages, and start putting them together as a complete book.
+Your goal is to continue to annotate the pages, and start putting them together as a complete book.
 Remember to do your best, this work is invaluable! You depend on others just as much as others will depend on you for their future explorations!
 '''
 
@@ -497,7 +497,7 @@ def help_step(phash, msg):
         send_to_player(phash, random.choice((
             'How would like to annotate this page?',
             'Which annotation would you like to add?',
-            'Which word would you like to add?',
+            f'Which word would you use to describe BLUE{get_word_for_page(pageid)}CLEAR?',
         )))
         return False
 
@@ -540,8 +540,8 @@ def help_step(phash, msg):
     if others:
         others = int(others)
         send_to_player(phash, random.choice((
-            f'{others} persons proposed this word on the page.',
-            f'Actually, {others} persons proposed this word on this page.',
+            f'{others} persons also proposed this word for this page.',
+            f'Actually, {others} persons proposed this word for this page.',
         )))
     else:
         send_to_player(phash, random.choice((
@@ -662,7 +662,7 @@ def player_game(phash, pmsg):
             )))
             send_to_player(phash, 'BLUEThank you for playing!CLEAR')
     else:
-        send_to_player(phash, 'BLUEThank you for playing!CLEAR Your annotations certainly will help others!')
+        send_to_player(phash, 'BLUEThank you for playing!CLEAR')
 
 def player_retrieve_sendto(phash):
     msg = r.getset(RK(f'send_to:{phash}'), '') or ''
@@ -765,7 +765,7 @@ def main():
             return jsonify({'reply': msg}), 201
         except:
             traceback.print_exc(file=sys.stdout)
-    app.run(port=5005, debug=True)
+    app.run(port=5005, debug=False)
 
 def http():
     global fg, bg, attr
@@ -804,7 +804,7 @@ def http():
             return open('index.html').read()
         except:
             traceback.print_exc(file=sys.stdout)
-    app.run(port=5004, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=False)
 
 if __name__ == '__main__':
     import fire
