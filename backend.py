@@ -425,7 +425,7 @@ def scramble_a_little(text, but_not=None):
             continue
         if but_not and (compare_words(w, but_not) or but_not.lower() in w.lower()):
             continue
-        while random.random() < 0.4:
+        while random.random() < 0.3:
             l = random.choice(w)
             newc = l
             if l in nethack:
@@ -495,8 +495,8 @@ def help_step(phash, msg):
         send_to_player(phash, page)
         send_to_player(phash, f'''The word BLUE{get_word_for_page(pageid)}CLEAR is starting to fade away, let's keep it strong!''')
         send_to_player(phash, random.choice((
-            'How would like to annotate this page?',
-            'Which annotation would you like to add?',
+            'How would like to annotate this word?',
+            'Which annotation would you like to use to describe it?',
             f'Which word would you use to describe BLUE{get_word_for_page(pageid)}CLEAR?',
         )))
         return False
@@ -539,10 +539,16 @@ def help_step(phash, msg):
     others = r.hget(RK(f'proposed_words:for_page_{pageid}'), msg)
     if others:
         others = int(others)
-        send_to_player(phash, random.choice((
-            f'{others} persons also proposed this word for this page.',
-            f'Actually, {others} persons proposed this word for this page.',
-        )))
+        if others == 1:
+            send_to_player(phash, random.choice((
+                f'Only one person proposed this word for this page.',
+                f'Actually, only one person proposed this word for this page.',
+            )))
+        else:
+            send_to_player(phash, random.choice((
+                f'{others} persons also proposed this word for this page.',
+                f'Actually, {others} persons proposed this word for this page.',
+            )))
     else:
         send_to_player(phash, random.choice((
             'You are the first to propose this word, yay!',
@@ -710,10 +716,11 @@ def test():
     r.hdel(RK('intro:ok'), phash)
     player_disconnect(phash)
     player_receive(phash, 'hi')
-    ircprint(phash, player_retrieve_sendto(phash))
-    player_receive(phash, 'blabla')
-    ircprint(phash, player_retrieve_sendto(phash))
-    player_receive(phash, 'deep')
+    if False:
+        ircprint(phash, player_retrieve_sendto(phash))
+        player_receive(phash, 'blabla')
+        ircprint(phash, player_retrieve_sendto(phash))
+        player_receive(phash, 'deep')
     ircprint(phash, player_retrieve_sendto(phash))
 
     ircprint(phash, ambiant_sound())
@@ -794,6 +801,7 @@ def http():
             for l in msg.split('\n'):
                 if not l.strip(): continue
                 lmsg.append(l)
+                print(f'{who}[{what}] {l}')
             msg = '\n'.join(lmsg) + '\n'
             return jsonify({'reply': msg}), 200
         except:
